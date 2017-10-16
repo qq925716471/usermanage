@@ -1,0 +1,70 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <context:component-scan base-package="com.springmvc"/>
+
+    <bean id="configProperties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath*:*.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="properties" ref="configProperties"></property>
+    </bean>
+
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          destroy-method="close" init-method="init" >
+        <property name="driverClassName" value="${database.driverClassName}"/>
+        <property name="url" value="${database.url}"/>
+        <property name="username" value="${database.username}"/>
+        <property name="password" value="${database.password}"/>
+        <!-- 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <property name="initialSize" value="10" /><!-- 配置初始化连接池数量-->
+        <property name="minIdle" value="10" /><!-- 配置最小连接池数量-->
+        <property name="maxActive" value="200" /><!-- 配置最大连接池数量-->
+        <property name="maxWait" value="60000" /><!-- 配置获取连接等待超时的时间 单位毫秒-->
+        <property name="useUnfairLock" value="true"/><!--使用非公平锁-->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" /><!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" /><!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="validationQuery" value="SELECT 'x'" /><!--用来检测连接是否有效的sql，要求是一个查询语句。-->
+        <property name="testWhileIdle" value="true" /><!--申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。-->
+    </bean>
+    <bean id="jpaVendorAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="true"/>
+        <property name="database" value="${database}"/>
+        <property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+    </bean>
+
+    <!-- JPA实体管理工厂的配置 -->
+    <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+            id="entityManagerFactory">
+        <property name="persistenceUnitName" value="persistenceUnit"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+    </bean>
+
+
+    <!-- Jpa 事务配置 -->
+    <bean class="org.springframework.orm.jpa.JpaTransactionManager"
+          id="transactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"  />
+
+    <jpa:repositories base-package="com.springmvc.dao"
+                      entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager" repository-impl-postfix="Impl"></jpa:repositories>
+</beans>
