@@ -65,6 +65,7 @@
                             <c:if test="${user.userName=='admin'}">
                             <button type="button" id="delete" class="btn btn btn-danger">删除</button>
                             </c:if>
+                            <button type="button" id="export" class="btn btn btn-info">导出</button>
                         </form>
                         <table class="table table-bordered table-hover">
                             <thead>
@@ -259,6 +260,11 @@
             $("#pageIndex").val($(this).attr("pageIndex")-1)
             $("#form").submit();
         })
+        $("#export").click(function(){
+            var param = $("#form").serialize();
+            location.href = "../order/export?"+param;
+        })
+
     })
 </script>
 </html>

@@ -39,7 +39,6 @@ import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 public class ExcelFactory {
 
 
-
     public static void createExcel(CollectionBeanProvider<?> beanProvider, Class clz, String tempPath, String excelName, String title, String locale) {
         createExcel(2, beanProvider, null, clz, tempPath, excelName, title, locale);
     }
@@ -60,7 +59,7 @@ public class ExcelFactory {
     }
 
     public static String createExcel(List<List> models, List<Class> clz, String tempPath, String excelName, List<String> sheetNames, String locale) {
-        return createExcel(1, null, models, clz, tempPath, excelName, sheetNames,locale);
+        return createExcel(1, null, models, clz, tempPath, excelName, sheetNames, locale);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -71,7 +70,7 @@ public class ExcelFactory {
         OutputStream os = null;
         WritableCellFormat wcf_center = null;
         Field[] fields = null;
-        String filePath=tempPath + System.getProperty("file.separator") + excelName + ".xls";
+        String filePath = tempPath + System.getProperty("file.separator") + excelName + ".xls";
         try {
             modelClass = Class.forName(clz.getName());
             os = new FileOutputStream(filePath);
@@ -144,13 +143,13 @@ public class ExcelFactory {
                             // 垂直方向合并单元格
                             try {
                                 ExcelAnnotation excelAnnotation = field.getAnnotation(ExcelAnnotation.class);
-                                if(!StringUtils.isEmpty(excelAnnotation.merge())) {
+                                if (!StringUtils.isEmpty(excelAnnotation.merge())) {
                                     Integer mergeSize = (Integer) clazz.getMethod(excelAnnotation.merge()).invoke(ssTopModel);
                                     if (mergeSize > 0) {
                                         sheet.mergeCells(columnId, rowId, columnId, rowId + mergeSize);
                                     }
                                 }
-                            } catch(Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             columnId++;
@@ -199,6 +198,105 @@ public class ExcelFactory {
     }
 
 
+    public static void createExcel(List models, Class clz, OutputStream os) {
+        Class modelClass = clz;
+        WritableWorkbook workbook = null;
+        try {
+            workbook = Workbook.createWorkbook(os);
+            WritableSheet sheet = workbook.createSheet("订单信息", 0);
+            // 用于标题
+            WritableFont titleFont = new WritableFont(WritableFont.ARIAL, 17, WritableFont.BOLD, false, UnderlineStyle.NO_UNDERLINE,
+                    jxl.format.Colour.WHITE);
+            WritableCellFormat wcf_title = new WritableCellFormat(titleFont);
+            wcf_title.setBackground(Colour.TEAL, Pattern.SOLID);
+            wcf_title.setBorder(Border.ALL, BorderLineStyle.DOUBLE, Colour.OCEAN_BLUE);
+            wcf_title.setVerticalAlignment(VerticalAlignment.CENTRE); // 垂直对齐
+            wcf_title.setAlignment(Alignment.CENTRE);
+
+
+            // 用于正文
+            WritableFont NormalFont = new WritableFont(WritableFont.TAHOMA, 11);
+            WritableCellFormat wcf_center = new WritableCellFormat(NormalFont);
+            wcf_center.setBorder(Border.ALL, BorderLineStyle.NONE, Colour.GRAY_25);
+            wcf_center.setVerticalAlignment(VerticalAlignment.CENTRE); // 垂直对齐
+            wcf_center.setAlignment(Alignment.CENTRE);
+            wcf_center.setWrap(true); // 是否换行
+
+            // 获取属性
+            Field[] fields = modelClass.getDeclaredFields();
+            List<ExcelAnnotation> annoList = new ArrayList<ExcelAnnotation>();
+            for (int i = 0; i < fields.length; i++) {
+                Field field = fields[i];
+                if (field.isAnnotationPresent(ExcelAnnotation.class)) {
+                    ExcelAnnotation anno = field.getAnnotation(ExcelAnnotation.class);
+                    if (null != anno) {
+                        annoList.add(anno);
+                    }
+                }
+            }
+
+            sheet.addCell(new Label(0, 0, "订单信息", wcf_title));
+            sheet.mergeCells(0, 0, annoList.size() - 1, 0);
+            sheet.setRowView(0, 800);
+
+            // 按照注解id排序Excel列
+//			Arrays.sort(fields, new FieldComparator());
+            for (int i = 0; i < annoList.size(); i++) {
+                // 获取该字段的注解对象
+                ExcelAnnotation anno = annoList.get(i);
+                sheet.setColumnView(i, anno.width());
+                sheet.addCell(new Label(i, 1, anno.name(), wcf_center));
+            }
+
+            int rowId = 2;// 写入第几行 第一行为列头 数据从第二行开始写
+            for (Object ssTopModel : models) {
+                int columnId = 0;// 写入第几列 第一列为自动计算的行号 数据从第二列开始写
+                // 获取该类 并获取自身方法
+                Class clazz = ssTopModel.getClass();
+                for (int i = 0; i < fields.length; i++) {
+                    Field field = fields[i];
+                    if (field.isAnnotationPresent(ExcelAnnotation.class)) {
+                        StringBuffer methodName = new StringBuffer();
+                        methodName.append("get");
+                        methodName.append(field.getName().substring(0, 1).toUpperCase());
+                        methodName.append(field.getName().substring(1));
+                        Method method = clazz.getMethod(methodName.toString());
+                        String content = method.invoke(ssTopModel) == null ? "" : method.invoke(ssTopModel).toString();
+                        sheet.addCell(new Label(columnId, rowId, content, wcf_center));
+
+                        // 垂直方向合并单元格
+                        try {
+                            ExcelAnnotation excelAnnotation = field.getAnnotation(ExcelAnnotation.class);
+                            if (!StringUtils.isEmpty(excelAnnotation.merge())) {
+                                Integer mergeSize = (Integer) clazz.getMethod(excelAnnotation.merge()).invoke(ssTopModel);
+                                if (mergeSize > 0) {
+                                    sheet.mergeCells(columnId, rowId, columnId, rowId + mergeSize);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        columnId++;
+                    }
+                }
+                rowId++;
+            }
+
+            workbook.write();
+            os.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                workbook.close();
+            } catch (Exception e) {
+            }
+            try {
+                os.close();
+            } catch (IOException e) {
+            }
+        }
+    }
 
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -209,11 +307,11 @@ public class ExcelFactory {
         OutputStream os = null;
         WritableCellFormat wcf_center = null;
         Field[] fields = null;
-        String filePath=tempPath + System.getProperty("file.separator") + excelName + ".xls";
+        String filePath = tempPath + System.getProperty("file.separator") + excelName + ".xls";
         try {
             os = new FileOutputStream(filePath);
             workbook = Workbook.createWorkbook(os);
-            for(int j = 0;j<modelsList.size();j++) {
+            for (int j = 0; j < modelsList.size(); j++) {
                 List models = modelsList.get(j);
                 Class clz = clzList.get(j);
                 modelClass = Class.forName(clz.getName());
@@ -331,187 +429,8 @@ public class ExcelFactory {
 
 
     /**
-     * 生成Excel
-     *
-     * @param models    封装需要到处的数据BEAN结合
-     * @param clz       导成Excel的实体BEAN包名.类名
-     * @param tempPath  生成Excel存放的临时路径
-     * @param excelName 生成的Excel名
-     * @param locale    在action中用this.localeStr(); 国际化相关
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void createExcelEn(List models, Class clz, String tempPath, String excelName, String title, String locale) {
-        Class modelClass = null;
-        try {
-            title = transLang(title, locale);
-
-            modelClass = Class.forName(clz.getName());
-            OutputStream os = new FileOutputStream(tempPath + System.getProperty("file.separator") + excelName + ".xls");
-            WritableWorkbook workbook = Workbook.createWorkbook(os);
-            WritableSheet sheet = workbook.createSheet(excelName, 0);
-            // 用于标题
-            WritableFont titleFont = new WritableFont(WritableFont.ARIAL, 17, WritableFont.BOLD, false, UnderlineStyle.NO_UNDERLINE,
-                    jxl.format.Colour.WHITE);
-            WritableCellFormat wcf_title = new WritableCellFormat(titleFont);
-            wcf_title.setBackground(Colour.TEAL, Pattern.SOLID);
-            wcf_title.setBorder(Border.ALL, BorderLineStyle.DOUBLE, Colour.OCEAN_BLUE);
-            wcf_title.setVerticalAlignment(VerticalAlignment.CENTRE); // 垂直对齐
-            wcf_title.setAlignment(Alignment.CENTRE);
-
-
-            // 用于正文
-            WritableFont NormalFont = new WritableFont(WritableFont.TAHOMA, 11);
-            WritableCellFormat wcf_center = new WritableCellFormat(NormalFont);
-            wcf_center.setBorder(Border.ALL, BorderLineStyle.NONE, Colour.GRAY_25);
-            wcf_center.setVerticalAlignment(VerticalAlignment.CENTRE); // 垂直对齐
-            wcf_center.setAlignment(Alignment.CENTRE);
-            wcf_center.setWrap(true); // 是否换行
-
-            // 获取属性
-            Field[] fields = modelClass.getDeclaredFields();
-            List<ExcelAnnotation> annoList = new ArrayList<ExcelAnnotation>();
-            for (int i = 0; i < fields.length; i++) {
-                Field field = fields[i];
-                if (field.isAnnotationPresent(ExcelAnnotation.class)) {
-                    ExcelAnnotation anno = field.getAnnotation(ExcelAnnotation.class);
-                    if (null != anno) {
-                        annoList.add(anno);
-                    }
-                }
-            }
-
-            sheet.addCell(new Label(0, 0, title, wcf_title));
-            sheet.mergeCells(0, 0, annoList.size() - 1, 0);
-            sheet.setRowView(0, 800);
-
-            for (int i = 0; i < annoList.size(); i++) {
-                // 获取该字段的注解对象
-                ExcelAnnotation anno = annoList.get(i);
-                sheet.setColumnView(i, anno.width());
-
-                String localeName = transLang(anno.name(), locale);
-                sheet.addCell(new Label(i, 1, localeName, wcf_center));
-            }
-            int rowId = 2;// 写入第几行 第一行为列头 数据从第二行开始写
-            for (Object ssTopModel : models) {
-                int columnId = 0;// 写入第几列 第一列为自动计算的行号 数据从第二列开始写
-                // 获取该类 并获取自身方法
-                Class clazz = ssTopModel.getClass();
-                for (int i = 0; i < fields.length; i++) {
-                    Field field = fields[i];
-                    if (field.isAnnotationPresent(ExcelAnnotation.class)) {
-                        if (field.getType() == Double.class) {
-                            field.setAccessible(Boolean.TRUE);
-                            Double value = (Double) field.get(ssTopModel);
-                            jxl.write.Number val;
-                            if (value != null) {
-                                val = new jxl.write.Number(columnId, rowId, value, wcf_center);
-                            } else {
-                                val = new jxl.write.Number(columnId, rowId, 0.0d, wcf_center);
-                            }
-                            sheet.addCell(val);
-                        } else {
-                            StringBuffer methodName = new StringBuffer();
-                            methodName.append("get");
-                            methodName.append(field.getName().substring(0, 1).toUpperCase());
-                            methodName.append(field.getName().substring(1));
-                            Method method = clazz.getMethod(methodName.toString());
-                            String cellValue = method.invoke(ssTopModel) == null ? "" : method.invoke(ssTopModel)
-                                    .toString();
-                            cellValue = transLang(cellValue, locale);
-                            sheet.addCell(new Label(columnId, rowId, cellValue, wcf_center));
-                        }
-                        columnId++;
-                    }
-                }
-                rowId++;
-            }
-            workbook.write();
-            workbook.close();
-            os.flush();
-            os.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 创建 xlsx 版本的 excel
-     * @param targets
-     * @param filePath
-     * @param <T>
-     * @throws IOException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     */
-    public static <T> void createExcel(List<T> targets , String filePath, String fileName, String title, String locale) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        if (filePath == null || fileName == null){
-            throw new NullPointerException("生成EXCEL文件的路径不能为空");
-        }
-        org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook();
-        org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet();
-        Row titleRow = sheet.createRow(0);
-        org.apache.poi.ss.usermodel.Cell titleCell = titleRow.createCell(0);
-        setTitleStyle(workbook, titleRow, titleCell);
-        titleCell.setCellValue(title != null ? transLang(title, locale) : "");// 大标题栏内容
-        if (targets != null && !targets.isEmpty()) {
-            // 实体类中字段
-            Class<?> clz = targets.get(0).getClass();
-            Field[] declaredFields = clz.getDeclaredFields();
-            // 找出其中有注解标记的字段
-            List<Field> annotationFields = getAnnotationFields(declaredFields);
-            // 有注解标记的字段进行排序
-            Collections.sort(annotationFields, new Comparator<Field>() {
-                public int compare(Field f1, Field f2) {
-                    if (f1 != null && f2 != null) {
-                        ExcelAnnotation annotation1 = f1.getAnnotation(ExcelAnnotation.class);
-                        ExcelAnnotation annotation2 = f2.getAnnotation(ExcelAnnotation.class);
-                        if (annotation1 != null && annotation2 != null){
-                            return annotation1.id() - annotation2.id();
-                        }
-                    }
-                    return 0;
-                }
-            });
-            // 创建 Excel 对象并生成小标题栏
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, annotationFields.size() - 1));
-            Row fieldsRow = sheet.createRow(1);
-            for (Field annotationField : annotationFields) {
-                ExcelAnnotation annotation = annotationField.getAnnotation(ExcelAnnotation.class);
-                org.apache.poi.ss.usermodel.Cell cell = fieldsRow.createCell(annotation.id() - 1);
-                // 设置值
-                cell.setCellValue(transLang(annotation.name(),locale));
-                // 设置宽度
-                sheet.setColumnWidth(annotation.id() - 1, annotation.width() * 256);
-            }
-            // 在 Excel 对像中生成数据栏
-            int rowNum = 2;
-            for (T target : targets){
-                Row dataRow = sheet.createRow(rowNum++);
-                for (Field annotationField : annotationFields){
-                    int column = annotationField.getAnnotation(ExcelAnnotation.class).id() - 1;
-                    String fieldName = annotationField.getName();
-                    Object fieldValue = clz.getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(target);
-                    if (fieldValue != null) {
-                        dataRow.createCell(column).setCellValue(transLang(String.valueOf(fieldValue),locale));
-                    } else {
-                        dataRow.createCell(column).setCellValue("");
-                    }
-                }
-            }
-        } else {
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 25));
-        }
-        // 成功
-        FileOutputStream stream = new FileOutputStream(filePath + "/" + fileName + ".xlsx");
-        workbook.write(stream);
-        stream.flush();
-        stream.close();
-    }
-
-    /**
      * 设置大标题栏的样式
+     *
      * @param workbook
      * @param titleRow
      * @param titleCell
@@ -523,7 +442,7 @@ public class ExcelFactory {
         titleCellFont.setFontHeightInPoints((short) 30);// 大标题栏字体大小
         titleCellFont.setFontName("");
         titleCellStyle.setFont(titleCellFont);
-        titleCellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(50,150,50)));// 大标题栏背景颜色
+        titleCellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(50, 150, 50)));// 大标题栏背景颜色
         titleCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
         titleCellStyle.setAlignment(HorizontalAlignment.CENTER);// 大标题栏居中显示
         titleCell.setCellStyle(titleCellStyle);
@@ -597,7 +516,7 @@ public class ExcelFactory {
         }
         return lstReturn;
     }
-    
+
     public static List readExcel(String filename, Class clz, int startIndex) throws Exception {
         return readExcel(filename, clz, startIndex, 0);
     }
@@ -767,9 +686,9 @@ public class ExcelFactory {
                 if (field.isAnnotationPresent(ExcelAnnotation.class)) {
                     Cell cell = firstSheet.getCell(j, i);
                     String cellValue;
-                    if(!StringUtils.isEmpty(cell.getContents())){
+                    if (!StringUtils.isEmpty(cell.getContents())) {
                         cellValue = cell.getContents().trim();//取得内容
-                    }else{
+                    } else {
                         cellValue = "";
                     }
                     setter(obj, field, cellValue, String.class);
@@ -981,14 +900,15 @@ public class ExcelFactory {
 
     /**
      * 获取有注解覆盖的字段集合
+     *
      * @param fields
      * @return
      */
-    private static List<Field> getAnnotationFields(Field[] fields){
+    private static List<Field> getAnnotationFields(Field[] fields) {
         List<Field> results = new LinkedList<Field>();
-        if (fields != null){
-            for (Field field : fields){
-                if (field != null && field.isAnnotationPresent(ExcelAnnotation.class)){
+        if (fields != null) {
+            for (Field field : fields) {
+                if (field != null && field.isAnnotationPresent(ExcelAnnotation.class)) {
                     results.add(field);
                 }
             }

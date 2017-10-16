@@ -2,6 +2,7 @@ package com.springmvc.controller;
 
 import com.springmvc.service.OrderService;
 import com.springmvc.service.UserService;
+import com.springmvc.util.ExcelFactory;
 import com.springmvc.util.VerifyCodeUtils;
 import com.springmvc.vo.Order;
 import com.springmvc.vo.OrderSearchVo;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -52,6 +54,28 @@ public class OrderController {
         model.addAttribute("pageIndex",pageIndex);
         return "orderList";
     }
+
+    @RequestMapping("/export")
+    public void export(Integer pageIndex,HttpServletRequest request,HttpServletResponse response, @ModelAttribute("orderSearch") OrderSearchVo orderSearchVo) throws IOException {
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
+        response.addHeader("Content-Disposition",
+                "attachment;fileName=" + new String("订单详情".getBytes("UTF-8"),"iso8859-1")+".xls");// 设置文件名
+        if (pageIndex == null) pageIndex = Integer.valueOf(0);
+        PageRequest page = new PageRequest(pageIndex,Integer.MAX_VALUE);
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if(!"admin".equals(user.getUserName())){
+            orderSearchVo.setUserId(user.getId().toString());
+        }
+        orderList = orderService.getAll(orderSearchVo, page);
+        userList = userService.getAll();
+        ExcelFactory.createExcel(orderList.getContent(),Order.class,response.getOutputStream());
+    }
+
     @RequestMapping("/count")
     public String toCount(Model model, @ModelAttribute("orderSearch") OrderSearchVo orderSearchVo) {
         List list = orderService.getUserOrderCount(orderSearchVo);
