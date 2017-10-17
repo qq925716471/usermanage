@@ -42,7 +42,14 @@
     </div>
     <div class="panel-body">
         <img src="img/img_01.jpg">
+        <img src="img/img_02.jpg">
+        <img src="img/img_03.jpg">
+        <img src="img/img_04.jpg">
+        <img src="img/img_05.jpg">
         <img src="img/img_06.jpg">
+        <img src="img/img_07.jpg">
+        <img src="img/img_08.jpg">
+        <img src="img/img_09.jpg">
         <img src="img/img_10.jpg">
         <div class="alert alert-info" style="font-size: 1.2em">
             重要提示：官方活动，参与即将免费领取阿迪运动套装一套(衣+裤)，男女款尺码自选。 <strong style="color: red;">此次免费赠予活动不包邮，<span
