@@ -130,7 +130,7 @@
                 <button id="fmBtn" type="button" disabled="disabled" class="btn btn-danger btn-block">填好了->提交</button>
             </fieldset>
         </form>
-        <img src="http://os.0sg3.cn:80/static/goods/search-order.jpg">
+        <img src="img/code.jpg">
         <div style="margin:15px;">
             <button style="float:right;" id="badBtn" type="button" class="btn btn-warning">举报</button>
             <button id="goodBtn" type="button" class="btn btn-info">赞</button>
