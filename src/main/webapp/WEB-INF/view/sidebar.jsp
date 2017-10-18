@@ -32,9 +32,6 @@
                     <c:if test="${user.userName=='admin'}">
                     <li><a href="../user"><i class="fa fa-circle-o"></i>用户管理</a></li>
                     </c:if>
-                    <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Morris</a></li>
-                    <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
-                    <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -47,11 +44,9 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="../order/list"><i class="fa fa-circle-o"></i>订单列表</a></li>
+                    <c:if test="${user.userName=='admin'}">
                     <li><a href="../order/count"><i class="fa fa-circle-o"></i>员工单量统计表</a></li>
-                    <li><a href="pages/UI/buttons.html"><i class="fa fa-circle-o"></i> Buttons</a></li>
-                    <li><a href="pages/UI/sliders.html"><i class="fa fa-circle-o"></i> Sliders</a></li>
-                    <li><a href="pages/UI/timeline.html"><i class="fa fa-circle-o"></i> Timeline</a></li>
-                    <li><a href="pages/UI/modals.html"><i class="fa fa-circle-o"></i> Modals</a></li>
+                    </c:if>
                 </ul>
             </li>
 

@@ -30,7 +30,14 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String HelloWorld() {
+    public String login() {
+        return "login";
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout( HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.removeAttribute("user");
         return "login";
     }
 

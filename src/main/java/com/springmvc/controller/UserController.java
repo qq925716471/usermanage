@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -39,6 +40,20 @@ public class UserController {
         User user = userService.getById(userId);
         user.setEnable(false);
         userService.save(user);
+        return "success";
+    }
+
+    @RequestMapping("/user/updatePass")
+    @ResponseBody
+    public String updatePass(HttpServletRequest request,@RequestParam("oldPass") String oldPass,@RequestParam("passWord") String passWord) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        User dbUser = userService.getById(user.getId());
+        if(!user.getPassWord().equals(oldPass)){
+            return "oldPassError";
+        }
+        dbUser.setPassWord(passWord);
+        userService.save(dbUser);
         return "success";
     }
 

@@ -52,6 +52,7 @@ public class OrderController {
         model.addAttribute("orderList",orderList);
         model.addAttribute("totalCount",orderList.getTotalPages());
         model.addAttribute("pageIndex",pageIndex);
+        model.addAttribute("searchVo",orderSearchVo);
         return "orderList";
     }
 
@@ -82,6 +83,7 @@ public class OrderController {
         //List list2 = orderService.getUserDateOrderCount(orderSearchVo);
         userList = userService.getAll();
         model.addAttribute("list",list);
+        model.addAttribute("searchVo",orderSearchVo);
         return "orderCount";
     }
 

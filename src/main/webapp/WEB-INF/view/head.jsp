@@ -34,7 +34,8 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    <!-- jQuery 3 -->
+    <script src="../js/jquery.min.js"></script>
     <!-- Google Font -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -46,17 +47,117 @@
         <!-- Logo -->
         <a href="index" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>A</b>LT</span>
+            <span class="logo-mini"><b>销售管理平台</b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>Admin</b>LTE</span>
+            <span class="logo-lg"><b>销售管理平台</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
             <a href="index" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only"></span>
             </a>
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <!-- Messages: style can be found in dropdown.less-->
 
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="../img/user2-160x160.jpg" class="user-image" alt="User Image">
+                            <span class="hidden-xs">${user.name}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="../img/user2-160x160.jpg" class="img-circle" alt="User Image">
+
+                                <p>
+                                    ${user.name}
+                                </p>
+                            </li>
+                            <!-- Menu Body -->
+                            <li class="user-body">
+                                <div class="row">
+                                </div>
+                                <!-- /.row -->
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" class="btn btn-default btn-flat" data-toggle="modal"
+                                       data-target="#myModal" data-target=".bs-example-modal-sm">修改密码</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="../logout" class="btn btn-default btn-flat">注销</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                </ul>
+            </div>
 
         </nav>
     </header>
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="#">
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="oldPassword" placeholder="请输入旧密码">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="password" placeholder="请输入新密码">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="repeatPassword" placeholder="请重复输入新密码">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" id="updatePass" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $("#updatePass").click(function () {
+                var oldPass = $("#oldPassword").val()
+                var passWord = $("#password").val()
+                var repeatPassword = $("#repeatPassword").val()
+                if (!oldPass) {
+                    alert("请输入旧密码")
+                    return
+                }
+                if (!passWord) {
+                    alert("请输入新密码")
+                    return
+                }
+                if (passWord != repeatPassword) {
+                    alert("两次输入的密码不一致")
+                    return
+                }
+                $.post("../user/updatePass", {oldPass: md5(oldPass), passWord: md5(passWord)}, function (res) {
+                    if (res == "success") {
+                        alert("修改成功")
+                        $("#myModal").modal("hide")
+                    } else if (res == "oldPassError") {
+                        alert("输入的旧密码错误")
+                    }
+                })
+            })
+        })
+    </script>

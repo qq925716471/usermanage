@@ -127,16 +127,16 @@ public class OrderDaoImpl {
         Query listQuery = manager.createNativeQuery(sb.toString());
 
         if (!StringUtils.isEmpty(orderSearchVo.getStartDate())) {
-            listQuery.setParameter(3, orderSearchVo.getStartDate());
+            listQuery.setParameter(1, orderSearchVo.getStartDate());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getEndDate())) {
-            listQuery.setParameter(4, orderSearchVo.getEndDate());
+            listQuery.setParameter(2, orderSearchVo.getEndDate());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getUserId())) {
-            listQuery.setParameter(6, orderSearchVo.getUserId());
+            listQuery.setParameter(3, orderSearchVo.getUserId());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getStatus())) {
-            listQuery.setParameter(7, orderSearchVo.getStatus());
+            listQuery.setParameter(4, orderSearchVo.getStatus());
         }
         List list = listQuery.getResultList();
         manager.close();
@@ -164,16 +164,16 @@ public class OrderDaoImpl {
         Query listQuery = manager.createNativeQuery(sb.toString());
 
         if (!StringUtils.isEmpty(orderSearchVo.getStartDate())) {
-            listQuery.setParameter(3, orderSearchVo.getStartDate());
+            listQuery.setParameter(1, orderSearchVo.getStartDate());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getEndDate())) {
-            listQuery.setParameter(4, orderSearchVo.getEndDate());
+            listQuery.setParameter(2, orderSearchVo.getEndDate());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getUserId())) {
-            listQuery.setParameter(6, orderSearchVo.getUserId());
+            listQuery.setParameter(3, orderSearchVo.getUserId());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getStatus())) {
-            listQuery.setParameter(7, orderSearchVo.getStatus());
+            listQuery.setParameter(4, orderSearchVo.getStatus());
         }
         List list = listQuery.getResultList();
         manager.close();
