@@ -37,8 +37,8 @@ public class OrderService {
         return orderDao.findOne(id);
     }
 
-    public Order findByMobile(String mobile) {
-        return orderDao.findByMobile(mobile);
+    public Order findByTs(String ts) {
+        return orderDao.findByTs(ts);
     }
 
     public List getUserOrderCount(OrderSearchVo orderSearchVo ){

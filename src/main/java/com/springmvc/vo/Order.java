@@ -58,6 +58,8 @@ public class Order {
     @Column(name = "note")
     @ExcelAnnotation(name="备注")
     private String note;//备注
+    @Column(name = "ts")
+    private String ts;
 
     public Long getId() {
         return id;
@@ -185,5 +187,13 @@ public class Order {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getTs() {
+        return ts;
+    }
+
+    public void setTs(String ts) {
+        this.ts = ts;
     }
 }
