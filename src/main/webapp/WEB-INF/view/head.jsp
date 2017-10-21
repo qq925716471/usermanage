@@ -86,7 +86,7 @@
                             <li class="user-footer">
                                 <div class="pull-left">
                                     <a href="#" class="btn btn-default btn-flat" data-toggle="modal"
-                                       data-target="#myModal" data-target=".bs-example-modal-sm">修改密码</a>
+                                       data-target="#updatePassModal" data-target=".bs-example-modal-sm">修改密码</a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="../logout" class="btn btn-default btn-flat">注销</a>
@@ -104,7 +104,8 @@
         </nav>
     </header>
     <!-- Modal -->
-    <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade bs-example-modal-sm" id="updatePassModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -153,7 +154,7 @@
                 $.post("../user/updatePass", {oldPass: md5(oldPass), passWord: md5(passWord)}, function (res) {
                     if (res == "success") {
                         alert("修改成功")
-                        $("#myModal").modal("hide")
+                        $("#updatePassModal").modal("hide")
                     } else if (res == "oldPassError") {
                         alert("输入的旧密码错误")
                     }
