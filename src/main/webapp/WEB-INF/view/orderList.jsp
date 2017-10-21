@@ -98,6 +98,7 @@
                                 <th>型号</th>
                                 <th>快递</th>
                                 <th>销售人员</th>
+                                <th>下单时间</th>
                                 <th>状态</th>
                                 <th>备注</th>
                                 <th>操作</th>
@@ -117,6 +118,8 @@
                                     <td>${order.size}</td>
                                     <td>${order.deliverId}</td>
                                     <td>${order.user}</td>
+                                    <th><fmt:formatDate type="both"
+                                                        value="${order.createDate}"/></th>
                                     <td>${order.status}</td>
                                     <td>${order.note}</td>
                                     <td>
@@ -130,6 +133,9 @@
                             </tbody>
                         </table>
                         <nav aria-label="Page navigation">
+                            <ul class="pagination pull-left" style="color: #00c0ef">
+                                共${orderList.totalElements}条记录
+                            </ul>
                             <ul class="pagination pull-right">
                                 <c:forEach var="i" begin="1" end="${totalCount}">
                                     <li

@@ -12,3 +12,4 @@ gen
 .idea/
 target/
 usermanage.iml
+/src/main/resources/database.properties
