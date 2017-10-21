@@ -52,7 +52,7 @@ public class BuyController {
         if (!code.equalsIgnoreCase(imageCode)) {
             return "codeError";
         }
-        if(orderService.findByTs(order.getTs())!=null){
+        if(orderService.findByTs(order.getTs())!=null||orderService.findByMobile(order.getMobile())!=null){
             return "repeat";
         }
         session.removeAttribute("verCode");

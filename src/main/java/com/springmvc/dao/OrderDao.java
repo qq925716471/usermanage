@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderDao extends JpaRepository<Order, Long> {
     Order findByTs(String ts);
+    Order findByMobile(String mobile);
 }

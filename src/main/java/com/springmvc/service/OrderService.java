@@ -41,6 +41,10 @@ public class OrderService {
         return orderDao.findByTs(ts);
     }
 
+    public Order findByMobile(String mobile) {
+        return orderDao.findByMobile(mobile);
+    }
+
     public List getUserOrderCount(OrderSearchVo orderSearchVo ){
         return orderDaoImpl.getUserOrderCount(orderSearchVo);
     }

@@ -61,7 +61,7 @@ public class OrderDaoImpl {
             sb.append(" and status = ?7 ");
             countSb.append(" and status = ?7 ");
         }
-        sb.append(" order by create_date");
+        sb.append(" order by create_date desc");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         Query listQuery = entityManager.createNativeQuery(sb.toString(), Order.class);
         Query countQuery = entityManager.createNativeQuery(countSb.toString());
