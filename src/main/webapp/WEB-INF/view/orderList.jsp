@@ -5,6 +5,7 @@
 <!-- Left side column. contains the logo and sidebar -->
 <%@include file="sidebar.jsp" %>
 <!-- Content Wrapper. Contains page content -->
+<fmt:setTimeZone value="GMT+8" />
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
