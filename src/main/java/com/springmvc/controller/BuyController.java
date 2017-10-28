@@ -62,6 +62,7 @@ public class BuyController {
                 order.setUser(user.getName());
             }
         }
+        order.setEnable("1");
         order.setStatus("待发货");
         order.setCreateDate(Calendar.getInstance().getTime());
         orderService.save(order);

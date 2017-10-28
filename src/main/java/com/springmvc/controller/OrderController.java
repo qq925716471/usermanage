@@ -40,7 +40,7 @@ public class OrderController {
     @RequestMapping("/list")
     public String toList(Model model, Integer pageIndex,HttpServletRequest request, @ModelAttribute("orderSearch") OrderSearchVo orderSearchVo) {
         if (pageIndex == null) pageIndex = Integer.valueOf(0);
-        PageRequest page = new PageRequest(pageIndex, 20);
+        PageRequest page = new PageRequest(pageIndex, 200);
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if(!"admin".equals(user.getUserName())){

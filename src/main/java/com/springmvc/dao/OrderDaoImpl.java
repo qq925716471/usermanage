@@ -31,8 +31,8 @@ public class OrderDaoImpl {
         int pageNumber = pageable.getPageNumber();
         int limit = (pageNumber) * pageSize;
         int max = (pageNumber + 1) * pageSize;
-        StringBuilder sb = new StringBuilder("select * from t_order where 1=1 ");
-        StringBuilder countSb = new StringBuilder("select count(*) from t_order where 1=1 ");
+        StringBuilder sb = new StringBuilder("select * from t_order where enable = 1 ");
+        StringBuilder countSb = new StringBuilder("select count(*) from t_order where enable = 1 ");
         if (!StringUtils.isEmpty(orderSearchVo.getName())) {
             sb.append(" and name like ?1 ");
             countSb.append(" and name like ?1 ");
@@ -79,8 +79,8 @@ public class OrderDaoImpl {
             countQuery.setParameter(3, orderSearchVo.getStartDate());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getEndDate())) {
-            listQuery.setParameter(4, orderSearchVo.getEndDate());
-            countQuery.setParameter(4, orderSearchVo.getEndDate());
+            listQuery.setParameter(4, orderSearchVo.getEndDate() + " 23:59:59");
+            countQuery.setParameter(4, orderSearchVo.getEndDate() + " 23:59:59");
         }
         if (!StringUtils.isEmpty(orderSearchVo.getDeliverId())) {
             listQuery.setParameter(5, orderSearchVo.getDeliverId());
@@ -130,7 +130,7 @@ public class OrderDaoImpl {
             listQuery.setParameter(1, orderSearchVo.getStartDate());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getEndDate())) {
-            listQuery.setParameter(2, orderSearchVo.getEndDate());
+            listQuery.setParameter(2, orderSearchVo.getEndDate() + " 23:59:59");
         }
         if (!StringUtils.isEmpty(orderSearchVo.getUserId())) {
             listQuery.setParameter(3, orderSearchVo.getUserId());
@@ -167,7 +167,7 @@ public class OrderDaoImpl {
             listQuery.setParameter(1, orderSearchVo.getStartDate());
         }
         if (!StringUtils.isEmpty(orderSearchVo.getEndDate())) {
-            listQuery.setParameter(2, orderSearchVo.getEndDate());
+            listQuery.setParameter(2, orderSearchVo.getEndDate() + " 23:59:59");
         }
         if (!StringUtils.isEmpty(orderSearchVo.getUserId())) {
             listQuery.setParameter(3, orderSearchVo.getUserId());
@@ -186,7 +186,7 @@ public class OrderDaoImpl {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            String sql = "delete from t_order where id in (?1)";
+            String sql = "update t_order set enable = 0 where id in (?1)";
             Query listQuery = manager.createNativeQuery(sql);
             listQuery.setParameter(1, ids);
             listQuery.executeUpdate();

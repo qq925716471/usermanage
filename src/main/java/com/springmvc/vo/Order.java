@@ -60,6 +60,8 @@ public class Order {
     private String note;//备注
     @Column(name = "ts")
     private String ts;
+    @Column(name = "enable")
+    private String enable;
 
     public Long getId() {
         return id;
@@ -195,5 +197,13 @@ public class Order {
 
     public void setTs(String ts) {
         this.ts = ts;
+    }
+
+    public String getEnable() {
+        return enable;
+    }
+
+    public void setEnable(String enable) {
+        this.enable = enable;
     }
 }

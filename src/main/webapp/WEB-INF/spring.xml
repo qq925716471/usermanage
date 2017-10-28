@@ -33,8 +33,8 @@
         <property name="testOnBorrow" value="false" />
         <property name="testOnReturn" value="false" />
         <property name="initialSize" value="10" /><!-- 配置初始化连接池数量-->
-        <property name="minIdle" value="10" /><!-- 配置最小连接池数量-->
-        <property name="maxActive" value="200" /><!-- 配置最大连接池数量-->
+        <property name="minIdle" value="20" /><!-- 配置最小连接池数量-->
+        <property name="maxActive" value="100" /><!-- 配置最大连接池数量-->
         <property name="maxWait" value="60000" /><!-- 配置获取连接等待超时的时间 单位毫秒-->
         <property name="useUnfairLock" value="true"/><!--使用非公平锁-->
         <property name="timeBetweenEvictionRunsMillis" value="60000" /><!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
