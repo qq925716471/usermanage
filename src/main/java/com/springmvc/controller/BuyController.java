@@ -37,7 +37,7 @@ public class BuyController {
     private OrderService orderService;
 
     @RequestMapping("/buy")
-    public String tobuy(Integer pageIndex) {
+    public String tobuy() {
         return "buy";
     }
 
@@ -58,6 +58,9 @@ public class BuyController {
         session.removeAttribute("verCode");
         if (!StringUtils.isEmpty(order.getUserId())) {
             User user = userService.getById(Long.valueOf(order.getUserId()));
+            if(!user.isEnable()){
+                return "invalid";
+            }
             if (user != null) {
                 order.setUser(user.getName());
             }

@@ -53,7 +53,7 @@
         <img src="img/img_10.jpg">
         <div class="alert alert-info" style="font-size: 1.2em">
             重要提示：官方活动，参与即将免费领取阿迪运动套装一套(衣+裤)，男女款尺码自选。 <strong style="color: red;">此次免费赠予活动不包邮，<span
-    style="font-size: 1.2em;">打包费+包装费+快递费共计不超过35元 </span>，货到后支付给您送货的快递人员即可，全国统一用韵达快递发货
+                style="font-size: 1.2em;">打包费+包装费+快递费共计不超过35元 </span>，货到后支付给您送货的快递人员即可，全国统一用韵达快递发货
         </strong>！
         </div>
         <hr>
@@ -149,7 +149,7 @@
 <script src="../js/jquery.min.js"></script>
 <script src="css/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="js/PCASClass.js"></script>
-    <script src="../js/jquery-confirm.min.js"></script>
+<script src="../js/jquery-confirm.min.js"></script>
 <script>
     $(function () {
         //点击图片更换验证码
@@ -178,112 +178,117 @@
             var addr = $("#addr").val();
             var size = $("#size").val();
             var style = $("#style").val();
-            var imageCode = $("#imageCode").val()&&$("#imageCode").val().trim();
+            var imageCode = $("#imageCode").val() && $("#imageCode").val().trim();
             if ($.trim(userName) == '') {
                 $.alert({
-                title: '提示',
-                content: '请填写姓名!',
+                    title: '提示',
+                    content: '请填写姓名!',
                 });
                 return false;
             }
             if ($.trim(mobile) == '') {
                 $.alert({
-                title: '提示',
-                content: '请填写联系电话!',
+                    title: '提示',
+                    content: '请填写联系电话!',
                 });
                 return false;
             }
             if ($.trim(mobile).length != 11) {
                 $.alert({
-                title: '提示',
-                content: '请填写正确的手机号码!',
+                    title: '提示',
+                    content: '请填写正确的手机号码!',
                 });
                 return false;
             }
             if ($.trim(province) == '') {
                 $.alert({
-                title: '提示',
-                content: '请选择省份!',
+                    title: '提示',
+                    content: '请选择省份!',
                 });
                 return false;
             }
             if ($.trim(city) == '') {
                 $.alert({
-                title: '提示',
-                content: '请选择城市!',
+                    title: '提示',
+                    content: '请选择城市!',
                 });
                 return false;
             }
             if ($.trim(area) == '') {
                 $.alert({
-                title: '提示',
-                content: '请选择地区!',
+                    title: '提示',
+                    content: '请选择地区!',
                 });
                 return false;
             }
             if ($.trim(style) == '') {
                 $.alert({
-                title: '提示',
-                content: '请选择款式!',
+                    title: '提示',
+                    content: '请选择款式!',
                 });
                 return false;
             }
             if ($.trim(size) == '') {
                 $.alert({
-                title: '提示',
-                content: '请选择尺码!',
+                    title: '提示',
+                    content: '请选择尺码!',
                 });
                 return false;
             }
             if ($.trim(imageCode) == '') {
                 $.alert({
-                title: '提示',
-                content: '请输入验证码!',
+                    title: '提示',
+                    content: '请输入验证码!',
                 });
                 return false;
             }
 
             $.ajaxSetup({
-                async : false
+                async: false
             });
             $.post(
-                 '../doBuy',
-                  $("#fm").serialize(),
-                  function (rs) {
-                    if (rs=="success") {
+                '../doBuy',
+                $("#fm").serialize(),
+                function (rs) {
+                    if (rs == "success") {
                         $.alert({
-                        title: '提示',
-                        content: '下单成功!',
+                            title: '提示',
+                            content: '下单成功!',
                         });
-                    } else if(rs=="codeError") {
+                    } else if (rs == "invalid") {
                         $.alert({
-                        title: '提示',
-                        content: '验证码错误!请重新输入或点击验证码图片更换验证码',
+                            title: '提示',
+                            content: '无效二维码!请联系销售人员',
                         });
-                    }else if(rs=="repeat") {
+                    } else if (rs == "codeError") {
+                        $.alert({
+                            title: '提示',
+                            content: '验证码错误!请重新输入或点击验证码图片更换验证码',
+                        });
+                    } else if (rs == "repeat") {
                         $.alert({
                             title: '提示',
                             content: '该手机已经领取',
                         });
-                    }else  {
+                    } else {
                         $.alert({
-                        title: '提示',
-                        content: '下单错误请联系销售人员!',
+                            title: '提示',
+                            content: '下单错误请联系销售人员!',
                         });
                     }
                 }
-             )
+            )
         });
         $("#badBtn").on("click", function () {
             $.alert({
-            title: '提示',
-            content: '举报成功!',
+                title: '提示',
+                content: '举报成功!',
             });
         });
         $("#goodBtn").on("click", function () {
             $.alert({
-            title: '提示',
-            content: '点赞成功!',
+                title: '提示',
+                content: '点赞成功!',
             });
         });
         var storage = window.localStorage;
