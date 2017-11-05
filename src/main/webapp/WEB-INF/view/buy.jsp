@@ -53,7 +53,7 @@
         <img src="img/img_10.jpg">
         <div class="alert alert-info" style="font-size: 1.2em">
             重要提示：官方活动，参与即将免费领取阿迪运动套装一套(衣+裤)，男女款尺码自选。 <strong style="color: red;">此次免费赠予活动不包邮，<span
-                style="font-size: 1.2em;">打包费+包装费+快递费共计不超过35元 </span>，货到后支付给您送货的快递人员即可，全国统一用韵达快递发货
+                style="font-size: 1.2em;">打包费+包装费+快递费共计不超过35元 </span>，货到后支付给您送货的快递人员即可，全国统一用中通快递发货(部分地区韵达快递)
         </strong>！
         </div>
         <hr>
