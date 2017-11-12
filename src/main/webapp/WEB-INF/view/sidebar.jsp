@@ -46,6 +46,7 @@
                     <li><a href="../order/list"><i class="fa fa-circle-o"></i>订单列表</a></li>
                     <c:if test="${user.userName=='admin'}">
                     <li><a href="../order/count"><i class="fa fa-circle-o"></i>员工单量统计表</a></li>
+                    <li><a href="../order/dateCount"><i class="fa fa-circle-o"></i>每日单量统计表</a></li>
                     </c:if>
                 </ul>
             </li>

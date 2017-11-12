@@ -80,12 +80,23 @@ public class OrderController {
     @RequestMapping("/count")
     public String toCount(Model model, @ModelAttribute("orderSearch") OrderSearchVo orderSearchVo) {
         List list = orderService.getUserOrderCount(orderSearchVo);
-        //List list2 = orderService.getUserDateOrderCount(orderSearchVo);
         userList = userService.getAll();
         model.addAttribute("list",list);
         model.addAttribute("searchVo",orderSearchVo);
+        model.addAttribute("userList",userList);
         return "orderCount";
     }
+
+    @RequestMapping("/dateCount")
+    public String toDateCount(Model model, @ModelAttribute("orderSearch") OrderSearchVo orderSearchVo) {
+        List list = orderService.getUserDateOrderCount(orderSearchVo);
+        userList = userService.getAll();
+        model.addAttribute("list",list);
+        model.addAttribute("searchVo",orderSearchVo);
+        model.addAttribute("userList",userList);
+        return "dateCount";
+    }
+
 
     @RequestMapping("/update")
     @ResponseBody
