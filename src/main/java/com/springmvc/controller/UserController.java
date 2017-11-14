@@ -28,7 +28,7 @@ public class UserController {
     @RequestMapping("/user")
     public String toUserList(Integer pageIndex, Model model) {
         if (pageIndex == null) pageIndex = Integer.valueOf(0);
-        PageRequest page = new PageRequest(pageIndex, 20);
+        PageRequest page = new PageRequest(pageIndex, 50);
         pageVo = userService.getAll(page);
         model.addAttribute("pageVo", pageVo);
         return "user";
