@@ -78,9 +78,12 @@ public class UserController {
     @ResponseBody
     public void download(@RequestParam("userId") Long userId, HttpServletRequest request, HttpServletResponse response) throws IOException, WriterException {
         User user = userService.getById(userId);
-        String url = "http://" + request.getServerName() + ":"
-                + request.getServerPort()           //端口号
-                + request.getContextPath() + "/buy?userId=" + userId;
+        String url = "http://" + request.getServerName();
+        if(request.getServerPort() !=80){
+            url = url+ ":"+ request.getServerPort();
+        }
+                //端口号
+        url = url+ request.getContextPath() + "/buy?userId=" + userId;
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/force-download;charset=utf-8");// 设置强制下载不打开
         response.addHeader("Content-Disposition",

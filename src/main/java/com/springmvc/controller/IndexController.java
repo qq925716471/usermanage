@@ -39,10 +39,12 @@ public class IndexController {
     public String index(Model model,HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        String myUrl = "http://" + request.getServerName() + ":"
-                + request.getServerPort()           //端口号
-                + request.getContextPath() + "/buy?userId=" + user.getId();
-        model.addAttribute("myUrl",myUrl);
+        String url = "http://" + request.getServerName();
+        if(request.getServerPort() !=80){
+            url = url+ ":"+ request.getServerPort();
+        }
+        url = url+ request.getContextPath() + "/buy?userId=" + user.getId();
+        model.addAttribute("myUrl",url);
         String userId = null;
         if(!"admin".equals(user.getUserName())){
             userId = String.valueOf(user.getId());
