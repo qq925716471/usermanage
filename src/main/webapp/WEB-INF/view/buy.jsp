@@ -33,6 +33,9 @@
     </style>
 </head>
 <body>
+<div class="weixin">
+    <img src="img/weixin-show.jpg">
+</div>
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2 class="panel-title title">
@@ -151,15 +154,29 @@
 <script src="js/PCASClass.js"></script>
 <script src="../js/jquery-confirm.min.js"></script>
 <script>
+    //判断是否为微信浏览器
+    function isWeiXin() {
+        var ua = window.navigator.userAgent.toLowerCase();
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    //初始化省份、城市、地区下拉列表
+    new PCAS("province", "city", "area");
     $(function () {
+        if(isWeiXin()) {
+            $(".weixin").show();
+            $(".panel-default").hide();
+        }else{
+            $(".weixin").hide();
+            $(".panel-default").show();
+        }
         //点击图片更换验证码
         $("#Verify").click(function () {
             $(this).attr("src", "regImgCode.do?timestamp=" + new Date().getTime());
         });
-    });
-    //初始化省份、城市、地区下拉列表
-    new PCAS("province", "city", "area");
-    $(function () {
         $("#agree").on("click", function () {
             if (this.checked) {
                 $("#fmBtn").prop("disabled", "")
