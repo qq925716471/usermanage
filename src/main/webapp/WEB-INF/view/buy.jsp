@@ -156,12 +156,13 @@
 <script>
     //判断是否为微信浏览器
     function isWeiXin() {
-        var ua = window.navigator.userAgent.toLowerCase();
+        return false;
+        /*var ua = window.navigator.userAgent.toLowerCase();
         if (ua.match(/MicroMessenger/i) == 'micromessenger') {
             return true;
         } else {
             return false;
-        }
+        }*/
     }
     //初始化省份、城市、地区下拉列表
     new PCAS("province", "city", "area");
